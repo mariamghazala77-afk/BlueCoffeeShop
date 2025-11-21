@@ -2,7 +2,6 @@ import React from "react";
 import "../Style/VisitUs.css";
 import { Link } from "react-router-dom";
 import {
-  FaCoffee,
   FaMapMarkerAlt,
   FaClock,
   FaArrowLeft,
