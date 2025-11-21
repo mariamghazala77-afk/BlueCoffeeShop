@@ -1,0 +1,227 @@
+/* 🌍 BLUE COFFEE SHOP – ULTRA RESPONSIVE DESIGN v2 */
+/* Optimized for desktop, tablet, iPad mini, iPhone, Android, and large screens */
+
+/* ===== RESET ===== */
+* {
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #faf8f6;
+  color: #3e2f25;
+  font-family: "Playfair Display", serif;
+  transition: all 0.3s ease;
+}
+
+/* ===== BASE TEXT ===== */
+h1, h2, h3, h4, h5, h6, p, span, button, a {
+  font-family: "Playfair Display", serif;
+  word-break: break-word;
+  transition: all 0.3s ease;
+}
+
+/* ===== LAYOUT WRAPPERS ===== */
+.menu-content, .home-content, .visit-card {
+  width: 100%;
+  max-width: 1200px;
+  margin: auto;
+  padding: 20px;
+}
+
+/* ===== TITLE SCALING ===== */
+.menu-title, .visit-title {
+  text-align: center;
+  line-height: 1.1;
+}
+
+/* ===== DESKTOP (>= 1200px) ===== */
+@media (min-width: 1200px) {
+  h1 { font-size: 4.8rem; }
+  h2 { font-size: 2.3rem; }
+  p, span, a, button { font-size: 1.1rem; }
+
+  .menu-title { font-size: 82px; }
+  .menu-items { grid-template-columns: repeat(3, 1fr); gap: 35px; }
+  .menu-card h2 { font-size: 22px; }
+  .menu-card span { font-size: 18px; }
+}
+
+/* ===== LAPTOP (900–1199px) ===== */
+@media (max-width: 1199px) and (min-width: 900px) {
+  h1 { font-size: 4rem; }
+  h2 { font-size: 2rem; }
+  p, span, a, button { font-size: 1rem; }
+
+  .menu-title { font-size: 70px; }
+  .menu-items { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 28px; }
+  .category-btn { font-size: 17px; padding: 12px 28px; }
+  .menu-card h2 { font-size: 19px; }
+  .menu-card span { font-size: 16px; }
+}
+
+/* ===== TABLET LANDSCAPE (700–899px) ===== */
+@media (max-width: 899px) and (min-width: 700px) {
+  h1 { font-size: 3.4rem; }
+  h2 { font-size: 1.8rem; }
+
+  .menu-title { font-size: 62px; margin-bottom: 45px; }
+  .menu-categories { gap: 14px; flex-wrap: wrap; justify-content: center; }
+
+  .category-btn {
+    font-size: 16px;
+    padding: 10px 24px;
+    border-radius: 45px;
+  }
+
+  .menu-items {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+    padding: 0 20px;
+  }
+
+  .menu-card {
+    padding: 24px 20px;
+    max-width: 280px;
+  }
+
+  .menu-card h2 { font-size: 18px; }
+  .menu-card span { font-size: 16px; }
+
+  .drink-subtitle {
+    font-size: 24px;
+    margin: 40px auto 25px;
+  }
+}
+
+/* ===== TABLET PORTRAIT (600–699px) ===== */
+@media (max-width: 699px) and (min-width: 600px) {
+  h1 { font-size: 2.8rem; }
+  h2 { font-size: 1.6rem; }
+  p, span, button, a { font-size: 0.95rem; }
+
+  .menu-title { font-size: 50px; margin-bottom: 35px; }
+
+  .category-btn {
+    width: 45%;
+    padding: 12px 0;
+    font-size: 15px;
+    border-radius: 40px;
+    box-shadow: 0 3px 10px rgba(94, 158, 214, 0.1);
+  }
+
+  .menu-items {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    padding: 0 15px;
+  }
+
+  .menu-card {
+    padding: 22px;
+    border-radius: 20px;
+  }
+
+  .menu-card h2 { font-size: 17px; }
+  .menu-card span { font-size: 15px; }
+
+  .drink-subtitle { font-size: 22px; }
+}
+
+/* ===== MOBILE (<=599px) ===== */
+@media (max-width: 599px) {
+  h1 { font-size: 2.3rem; }
+  h2 { font-size: 1.4rem; }
+  p, span, a, button { font-size: 0.9rem; }
+
+  .menu-title {
+    font-size: 44px;
+    margin-bottom: 32px;
+  }
+
+  /* Buttons full-width */
+  .menu-categories {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    justify-items: center;
+  }
+
+  .category-btn {
+    width: 90%;
+    font-size: 15px;
+    padding: 12px 0;
+    border-radius: 40px;
+    box-shadow: 0 4px 10px rgba(94, 158, 214, 0.15);
+  }
+
+  /* Menu cards 1 per row */
+  .menu-items {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .menu-card {
+    width: 90%;
+    margin: auto;
+    padding: 20px;
+    border-radius: 18px;
+  }
+
+  .menu-card h2 { font-size: 16px; }
+  .menu-card span { font-size: 14.5px; }
+
+  .drink-subtitle {
+    font-size: 19px;
+    margin: 35px auto 25px;
+  }
+
+  .back-btn {
+    font-size: 15px;
+    padding: 10px 28px;
+  }
+
+  .visit-card {
+    max-width: 90%;
+    padding: 30px 22px;
+  }
+
+  .visit-title { font-size: 32px; }
+}
+
+/* ===== MINI PHONES (<=400px) ===== */
+@media (max-width: 400px) {
+  h1 { font-size: 1.8rem; }
+  h2 { font-size: 1.2rem; }
+  p, span, a, button { font-size: 0.85rem; }
+
+  .menu-title { font-size: 36px; }
+
+  .category-btn {
+    width: 95%;
+    font-size: 14px;
+  }
+
+  .menu-card {
+    padding: 16px;
+  }
+
+  .menu-card h2 { font-size: 15px; }
+  .menu-card span { font-size: 13px; }
+}
+
+/* ===== LARGE DESKTOP (>=1440px) ===== */
+@media (min-width: 1440px) {
+  .menu-content { max-width: 1300px; }
+  .menu-title { font-size: 90px; }
+  .menu-card { max-width: 360px; }
+  .menu-card h2 { font-size: 24px; }
+  .menu-card span { font-size: 20px; }
+}
+
+/* ===== SUBTLE ANIMATIONS ===== */
+button:hover, .category-btn:hover, .back-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(94, 158, 214, 0.3);
+}

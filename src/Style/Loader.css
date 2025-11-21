@@ -1,0 +1,204 @@
+/* ===== BASE LOADER ===== */
+.loader-container {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(250, 245, 239, 0.96),
+    rgba(235, 245, 255, 0.95)
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  animation: fadeIn 1s ease forwards;
+  font-family: "Playfair Display", serif;
+  overflow: hidden;
+}
+
+/* Fade out animation */
+.fade-out {
+  animation: fadeOut 1.8s ease forwards;
+  animation-delay: 0.5s;
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* ===== LOGO WRAPPER ===== */
+.logo-wrapper {
+  position: relative;
+  width: 230px; /* Larger circle */
+  height: 230px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 60px rgba(94, 158, 214, 0.25);
+  animation: pulseGlow 3.5s ease-in-out infinite;
+  overflow: hidden;
+}
+
+/* ✨ Soft blue glowing aura */
+.circle-glow {
+  position: absolute;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(94, 158, 214, 0.45) 0%,
+    transparent 75%
+  );
+  filter: blur(30px);
+  animation: circleExpand 3s ease-in-out infinite;
+  z-index: 0;
+}
+
+/* 🌤️ Soft shimmer sweeping across the logo */
+.shine-effect {
+  position: absolute;
+  width: 80%;
+  height: 100%;
+  background: linear-gradient(
+    75deg,
+    rgba(255, 255, 255, 0) 40%,
+    rgba(255, 255, 255, 0.5) 50%,
+    rgba(255, 255, 255, 0) 60%
+  );
+  animation: shineSweep 5s ease-in-out infinite;
+  z-index: 2;
+  transform: translateX(-150%);
+}
+
+@keyframes shineSweep {
+  0% {
+    transform: translateX(-150%);
+  }
+  50% {
+    transform: translateX(150%);
+  }
+  100% {
+    transform: translateX(150%);
+  }
+}
+
+/* ===== LOGO IMAGE ===== */
+.loader-logo {
+  width: 150px;
+  border-radius: 50%;
+  z-index: 1;
+  opacity: 0;
+  transform: scale(0.9);
+  animation: logoAppear 2.5s ease forwards;
+}
+
+@keyframes logoAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ===== GLOWING CIRCLE ANIMATIONS ===== */
+@keyframes pulseGlow {
+  0% {
+    box-shadow: 0 0 40px rgba(94, 158, 214, 0.25),
+      0 0 100px rgba(94, 158, 214, 0.15);
+  }
+  50% {
+    box-shadow: 0 0 70px rgba(94, 158, 214, 0.35),
+      0 0 140px rgba(94, 158, 214, 0.2);
+  }
+  100% {
+    box-shadow: 0 0 40px rgba(94, 158, 214, 0.25),
+      0 0 100px rgba(94, 158, 214, 0.15);
+  }
+}
+
+@keyframes circleExpand {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+}
+
+/* ===== TEXT ===== */
+.loader-text {
+  margin-top: 45px;
+  font-size: 22px;
+  color: #3e2f25;
+  opacity: 0;
+  animation: fadeText 3s ease forwards;
+  animation-delay: 1.5s;
+  letter-spacing: 0.6px;
+}
+
+@keyframes fadeText {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 600px) {
+  .logo-wrapper {
+    width: 270px;
+    height: 270px;
+  }
+  .circle-glow {
+    width: 300px;
+    height: 300px;
+  }
+  .loader-logo {
+    width: 170px;
+  }
+  .loader-text {
+    font-size: 17px;
+    margin-top: 28px;
+  }
+}
+@media (min-width: 1400px) {
+  .logo-wrapper {
+    width: 270px;
+    height: 270px;
+  }
+  .circle-glow {
+    width: 300px;
+    height: 300px;
+  }
+  .loader-logo {
+    width: 170px;
+  }
+}
