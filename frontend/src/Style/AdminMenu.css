@@ -1,0 +1,188 @@
+/* ===============================
+   ADMIN HEADER
+================================ */
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.admin-title {
+  font-size: 38px;
+  font-family: "Dancing Script", cursive;
+  color: #3A5785;
+}
+
+/* ===============================
+   HEADER BUTTONS
+================================ */
+.admin-header-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+/* View Orders Button */
+.admin-orders-btn {
+  padding: 10px 22px;
+  border-radius: 30px;
+  border: 2px solid #3A5785;
+  background: transparent;
+  color: #3A5785;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.admin-orders-btn:hover {
+  background: #3A5785;
+  color: white;
+  box-shadow: 0 6px 18px rgba(58, 87, 133, 0.25);
+}
+
+/* Logout Button */
+.admin-logout-btn {
+  padding: 10px 22px;
+  border-radius: 30px;
+  border: none;
+  background: linear-gradient(135deg, #e35d5b, #c0392b);
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.admin-logout-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(192, 57, 43, 0.35);
+}
+.admin-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 18px;
+  padding: 14px 20px;
+  margin-bottom: 12px;
+  border: 1.2px solid rgba(58, 87, 133, 0.2);
+  transition: 0.25s ease;
+}
+
+.admin-row:hover {
+  box-shadow: 0 6px 18px rgba(58, 87, 133, 0.18);
+}
+
+.admin-row span {
+  font-size: 15px;
+  color: #3A5785;
+  font-weight: 600;
+}
+
+/* Row buttons */
+.admin-row button {
+  margin-left: 8px;
+  padding: 7px 16px;
+  border-radius: 25px;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: 0.25s;
+}
+
+/* Edit */
+.admin-row button:first-child {
+  background: #3A5785;
+  color: white;
+}
+
+.admin-row button:first-child:hover {
+  background: #2e4467;
+}
+
+/* Delete */
+.admin-row button:last-child {
+  background: #d9534f;
+  color: white;
+}
+
+.admin-row button:last-child:hover {
+  background: #c0392b;
+}
+/* Form submit button */
+.admin-form button {
+  grid-column: span 2;
+  justify-self: center;
+  padding: 11px 38px;
+  border-radius: 40px;
+  background: linear-gradient(135deg, #6ea8da, #3A5785);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  transition: 0.25s ease;
+}
+
+.admin-form button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(58, 87, 133, 0.3);
+}
+/* ===============================
+   ADMIN FORM INPUTS (IMPROVED)
+================================ */
+.admin-form input,
+.admin-form select {
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 28px;
+  border: 1.8px solid rgba(58, 87, 133, 0.35);
+  font-size: 15px;
+  font-weight: 500;
+  color: #3A5785;
+  background: rgba(255, 255, 255, 0.9);
+  outline: none;
+  transition: all 0.25s ease;
+}
+
+/* Placeholder style */
+.admin-form input::placeholder {
+  color: #8aa0bf;
+  font-weight: 400;
+}
+
+/* Focus effect */
+.admin-form input:focus,
+.admin-form select:focus {
+  border-color: #3A5785;
+  box-shadow: 0 0 0 4px rgba(58, 87, 133, 0.15);
+  background: #ffffff;
+}
+/* ===============================
+   FILE INPUT (PRETTIER)
+================================ */
+.admin-form input[type="file"] {
+  padding: 10px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1.8px dashed rgba(58, 87, 133, 0.4);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.admin-form input[type="file"]:hover {
+  background: rgba(58, 87, 133, 0.05);
+}
+/* ===============================
+   FORM LAYOUT REFINEMENT
+================================ */
+.admin-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 18px;
+  margin-bottom: 35px;
+}
