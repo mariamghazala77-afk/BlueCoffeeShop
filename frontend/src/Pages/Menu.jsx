@@ -18,7 +18,7 @@ import { CartContext } from "../Context/CartContext";
 
 function Menu() {
   // ===============================
-  // State
+  // STATE
   // ===============================
   const [category, setCategory] = useState("");
   const [menuData, setMenuData] = useState({});
@@ -26,7 +26,7 @@ function Menu() {
   const { addToCart } = useContext(CartContext);
 
   // ===============================
-  // Icons mapping
+  // CATEGORY ICONS
   // ===============================
   const categoryIcons = {
     Sandwiches: <FaUtensils />,
@@ -36,7 +36,7 @@ function Menu() {
   };
 
   // ===============================
-  // Fetch menu data
+  // FETCH MENU FROM BACKEND
   // ===============================
   useEffect(() => {
     axios
@@ -45,8 +45,10 @@ function Menu() {
         const groupedMenu = {};
 
         res.data.forEach((item) => {
+          // Ignore unknown categories
           if (!categoryIcons[item.category]) return;
 
+          // Create category group if not exists
           if (!groupedMenu[item.category]) {
             groupedMenu[item.category] = {
               icon: categoryIcons[item.category],
@@ -63,12 +65,10 @@ function Menu() {
       .catch((error) => {
         console.error("Error fetching menu:", error);
       });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // ===============================
-  // Render menu items
+  // RENDER MENU ITEMS
   // ===============================
   const renderItems = (data) => {
     if (!data) return null;
@@ -77,6 +77,7 @@ function Menu() {
       <div className="menu-items">
         {data.items.map((item) => (
           <div className="menu-card" key={item.id}>
+            {/* IMAGE — SIGNED URL FROM BACKEND */}
             {item.image_url && (
               <img
                 src={item.image_url}
@@ -85,9 +86,13 @@ function Menu() {
               />
             )}
 
+            {/* ITEM NAME */}
             <h2>{item.name}</h2>
+
+            {/* ITEM PRICE */}
             <span>${item.price}</span>
 
+            {/* ADD TO CART */}
             <button
               className="add-btn"
               onClick={() =>
@@ -111,12 +116,18 @@ function Menu() {
   // UI
   // ===============================
   return (
-    <div className="menu-page" style={{ backgroundImage: `url(${bg})` }}>
+    <div
+      className="menu-page"
+      style={{ backgroundImage: `url(${bg})` }}
+    >
+      {/* BACKGROUND OVERLAY */}
       <div className="menu-overlay"></div>
 
+      {/* MAIN CONTENT */}
       <div className="menu-content">
         <h1 className="menu-title">Our Menu</h1>
 
+        {/* CATEGORY BUTTONS */}
         <div className="menu-categories">
           {Object.keys(menuData).map((cat) => (
             <button
@@ -126,13 +137,16 @@ function Menu() {
               }`}
               onClick={() => setCategory(cat)}
             >
-              <span className="icon">{menuData[cat].icon}</span> {cat}
+              <span className="icon">{menuData[cat].icon}</span>
+              {cat}
             </button>
           ))}
         </div>
 
+        {/* MENU ITEMS */}
         {renderItems(menuData[category])}
 
+        {/* BACK BUTTON */}
         <Link to="/" className="back-btn">
           <FaArrowLeft />
           Back to Home

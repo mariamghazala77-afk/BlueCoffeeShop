@@ -1,24 +1,18 @@
 import mysql from "mysql";
 
-/*
-  Create MySQL connection
-  Using the same style as shown in class
-*/
 const db = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "blue_coffee_shop",
+  host: process.env.MYSQLHOST,
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
+  port: process.env.MYSQLPORT,
 });
 
-/*
-  Connect to database
-*/
 db.connect((err) => {
   if (err) {
-    console.log("Database connection error:", err);
+    console.error("❌ MySQL connection error:", err.message);
   } else {
-    console.log("MySQL connected");
+    console.log("✅ MySQL connected");
   }
 });
 

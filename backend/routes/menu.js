@@ -4,9 +4,7 @@ import upload from "../middleware/upload.js";
 
 const router = express.Router();
 
-/* ===============================
-   GET MENU (CLIENT)
-================================ */
+/* GET MENU (CLIENT) */
 router.get("/", (req, res) => {
   const sql = "SELECT * FROM menu WHERE is_available = 1";
   db.query(sql, (err, rows) => {
@@ -15,9 +13,7 @@ router.get("/", (req, res) => {
   });
 });
 
-/* ===============================
-   GET MENU (ADMIN)
-================================ */
+/* GET MENU (ADMIN) */
 router.get("/admin/all", (req, res) => {
   const sql = "SELECT * FROM menu";
   db.query(sql, (err, rows) => {
@@ -26,17 +22,16 @@ router.get("/admin/all", (req, res) => {
   });
 });
 
-/* ===============================
-   ADD MENU ITEM
-================================ */
+/* ADD MENU ITEM */
 router.post("/", upload.single("image"), (req, res) => {
   const { name, price, category } = req.body;
 
-  if (!name || !price || !category || !req.file) {
+  if (!name || !price || !category) {
     return res.status(400).json({ message: "Missing fields" });
   }
 
-  const imageUrl = `/uploads/${req.file.filename}`;
+  // Image is optional (static images used)
+  const imageUrl = req.body.image_url || null;
 
   const sql = `
     INSERT INTO menu (name, price, category, image_url, is_available)
@@ -49,42 +44,28 @@ router.post("/", upload.single("image"), (req, res) => {
   });
 });
 
-/* ===============================
-   UPDATE MENU ITEM
-================================ */
-router.put("/:id", upload.single("image"), (req, res) => {
+/* UPDATE MENU ITEM */
+router.put("/:id", (req, res) => {
   const { id } = req.params;
-  const { name, price, category, is_available } = req.body;
+  const { name, price, category, image_url, is_available } = req.body;
 
-  let sql = `
+  const sql = `
     UPDATE menu
-    SET name = ?, price = ?, category = ?, is_available = ?
+    SET name = ?, price = ?, category = ?, image_url = ?, is_available = ?
+    WHERE id = ?
   `;
 
-  const values = [
-    name,
-    price,
-    category,
-    is_available ?? 1,
-  ];
-
-  if (req.file) {
-    sql += ", image_url = ?";
-    values.push(`/uploads/${req.file.filename}`);
-  }
-
-  sql += " WHERE id = ?";
-  values.push(id);
-
-  db.query(sql, values, (err) => {
-    if (err) return res.status(500).json(err);
-    res.json({ message: "Menu item updated" });
-  });
+  db.query(
+    sql,
+    [name, price, category, image_url, is_available ?? 1, id],
+    (err) => {
+      if (err) return res.status(500).json(err);
+      res.json({ message: "Menu item updated" });
+    }
+  );
 });
 
-/* ===============================
-   DELETE MENU ITEM
-================================ */
+/* DELETE MENU ITEM */
 router.delete("/:id", (req, res) => {
   const sql = "DELETE FROM menu WHERE id = ?";
   db.query(sql, [req.params.id], (err) => {
@@ -94,4 +75,3 @@ router.delete("/:id", (req, res) => {
 });
 
 export default router;
-
