@@ -14,29 +14,31 @@ import {
 
 import { CartContext } from "../Context/CartContext";
 
+/* ===============================
+   CATEGORY ICONS (OUTSIDE COMPONENT)
+   This avoids ESLint dependency warnings
+================================ */
+const categoryIcons = {
+  Sandwiches: <FaUtensils />,
+  Desserts: <FaIceCream />,
+  "Hot Beverages": <FaMugHot />,
+  Croissant: <FaCheese />,
+};
+
 function Menu() {
   const [category, setCategory] = useState("");
   const [menuData, setMenuData] = useState({});
   const { addToCart } = useContext(CartContext);
 
-  // 🔴 BACKEND URL (VERY IMPORTANT)
-  const API_URL = "http://localhost:5000";
-
-  const categoryIcons = {
-    Sandwiches: <FaUtensils />,
-    Desserts: <FaIceCream />,
-    "Hot Beverages": <FaMugHot />,
-    Croissant: <FaCheese />,
-  };
-
   /* ===============================
-     FETCH MENU
+     FETCH MENU FROM BACKEND
   =============================== */
   useEffect(() => {
     api.get("/api/menu").then((res) => {
       const grouped = {};
 
       res.data.forEach((item) => {
+        // Ignore categories without icons
         if (!categoryIcons[item.category]) return;
 
         if (!grouped[item.category]) {
@@ -50,7 +52,10 @@ function Menu() {
       });
 
       setMenuData(grouped);
-      setCategory(Object.keys(grouped)[0]);
+
+      // Select first category by default
+      const firstCategory = Object.keys(grouped)[0];
+      setCategory(firstCategory);
     });
   }, []);
 
@@ -86,16 +91,16 @@ function Menu() {
         {/* MENU ITEMS */}
         <div className="menu-items">
           {menuData[category]?.items.map((item) => {
-            // ✅ Decide correct image URL
+            // Decide correct image URL
             const imageSrc = item.image_url
               ? item.image_url.startsWith("/uploads")
-                ? `${API_URL}${item.image_url}` // backend image
-                : item.image_url // frontend static image
+                ? `${process.env.REACT_APP_API_URL}${item.image_url}`
+                : item.image_url
               : null;
 
             return (
               <div className="menu-card" key={item.id}>
-                {/* IMAGE (OPTIONAL) */}
+                {/* IMAGE */}
                 {imageSrc && (
                   <img
                     src={imageSrc}
