@@ -186,3 +186,126 @@
   gap: 18px;
   margin-bottom: 35px;
 }
+/* ===============================
+   CURRENT IMAGE BOX
+================================ */
+.current-image-box {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  background: rgba(58, 87, 133, 0.08);
+  border-radius: 16px;
+  padding: 12px 16px;
+  border: 1.5px solid rgba(58, 87, 133, 0.25);
+}
+
+.current-image-box img {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.current-image-box span {
+  font-size: 14px;
+  font-weight: 600;
+  color: #3A5785;
+}
+
+/* ===============================
+   SUBMIT BUTTON (ADD / UPDATE)
+================================ */
+.admin-submit-btn {
+  grid-column: span 2;
+  justify-self: center;
+  padding: 12px 44px;
+  border-radius: 40px;
+  background: linear-gradient(135deg, #6ea8da, #3A5785);
+  color: white;
+  border: none;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.admin-submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(58, 87, 133, 0.35);
+}
+/* ===============================
+   RESPONSIVE — MOBILE
+================================ */
+@media (max-width: 600px) {
+
+  .admin-title {
+    font-size: 28px;
+    text-align: center;
+  }
+
+  .admin-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .admin-header-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .admin-orders-btn,
+  .admin-logout-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  /* Form becomes single column */
+  .admin-form {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-submit-btn {
+    grid-column: span 1;
+    width: 100%;
+  }
+
+  /* Menu rows stack vertically */
+  .admin-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .admin-row div {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  .current-image-box {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+/* ===============================
+   RESPONSIVE — TABLET
+================================ */
+@media (max-width: 900px) {
+
+  .admin-title {
+    font-size: 32px;
+  }
+
+  .admin-form {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+
+  .admin-submit-btn {
+    grid-column: span 2;
+  }
+
+  .admin-row {
+    gap: 12px;
+  }
+}

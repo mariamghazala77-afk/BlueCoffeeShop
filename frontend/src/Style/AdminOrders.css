@@ -185,3 +185,90 @@
   transform: translateY(-2px);
   box-shadow: 0 6px 16px rgba(37, 211, 102, 0.4);
 }
+/* ===============================
+   RESPONSIVE — ADMIN ORDERS (MOBILE)
+================================ */
+@media (max-width: 600px) {
+
+  .admin-orders-page {
+    padding: 30px 12px;
+    align-items: flex-start;
+  }
+
+  .admin-orders-card {
+    padding: 22px 18px;
+    border-radius: 20px;
+  }
+
+  /* Header stacks vertically */
+  .admin-orders-header {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .admin-title {
+    font-size: 28px;
+  }
+
+  /* Header buttons full width */
+  .admin-orders-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .back-menu-btn,
+  .logout-btn {
+    width: 100%;
+  }
+
+  /* Order card stacks */
+  .order-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 18px 18px;
+  }
+
+  /* Order actions become horizontal */
+  .order-actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .order-actions button {
+    flex: 1;
+  }
+
+  .whatsapp-btn {
+    width: 100%;
+    text-align: center;
+  }
+
+  .order-info p {
+    font-size: 14px;
+  }
+}
+/* ===============================
+   RESPONSIVE — ADMIN ORDERS (TABLET)
+================================ */
+@media (max-width: 900px) {
+
+  .admin-orders-card {
+    padding: 28px;
+  }
+
+  .admin-title {
+    font-size: 32px;
+  }
+
+  .order-card {
+    gap: 18px;
+  }
+
+  .order-actions {
+    gap: 12px;
+  }
+}

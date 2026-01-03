@@ -1,71 +1,70 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../Style/AdminOrders.css";
+import api from "../api/axios";
 
 function AdminOrders() {
-  // ===============================
-  // STATE
-  // ===============================
-  // Stores all active orders (pending / preparing)
+  /* ===============================
+     STATE
+  =============================== */
   const [orders, setOrders] = useState([]);
 
-  // ===============================
-  // NAVIGATION
-  // ===============================
+  /* ===============================
+     NAVIGATION
+  =============================== */
   const navigate = useNavigate();
 
-  // Logout admin and redirect to login page
   const logout = () => {
     localStorage.removeItem("adminLoggedIn");
     navigate("/admin/login");
   };
 
-  // ===============================
-  // FETCH ACTIVE ORDERS (ADMIN)
-  // ===============================
+  /* ===============================
+     FETCH ACTIVE ORDERS (ADMIN)
+  =============================== */
   const fetchOrders = async () => {
-    const res = await axios.get(
-      "api/orders/admin"
-    );
-    setOrders(res.data);
+    try {
+      const res = await api.get("/api/orders/admin");
+      setOrders(res.data);
+    } catch (err) {
+      console.error("FETCH ORDERS ERROR:", err);
+    }
   };
 
-  // Load orders once page opens
   useEffect(() => {
     fetchOrders();
   }, []);
 
-  // ===============================
-  // UPDATE ORDER STATUS
-  // ===============================
+  /* ===============================
+     UPDATE ORDER STATUS
+  =============================== */
   const updateStatus = async (id, status) => {
-    await axios.put(
-      `api/orders/${id}/status`,
-      { status }
-    );
-
-    // Reload orders after update
-    // ✅ If status becomes "completed", it disappears
-    // because backend returns only active orders
-    fetchOrders();
+    try {
+      await api.put(`/api/orders/${id}/status`, { status });
+      fetchOrders();
+    } catch (err) {
+      console.error("UPDATE STATUS ERROR:", err);
+    }
   };
 
-  // ===============================
-  // WHATSAPP NOTIFICATION
-  // ===============================
+  /* ===============================
+     WHATSAPP NOTIFICATION
+  =============================== */
   const notifyWhatsApp = (phone, name) => {
-    // Ensure country code (example: Lebanon = 961)
-    const formattedPhone = phone.startsWith("961")
-      ? phone
-      : `961${phone}`;
+    if (!phone) {
+      alert("Phone number not available");
+      return;
+    }
 
-    // Message sent to customer
+    const cleanPhone = phone.replace(/\D/g, "");
+    const formattedPhone = cleanPhone.startsWith("961")
+      ? cleanPhone
+      : `961${cleanPhone}`;
+
     const message = `Hello ${name} 👋
 Your order from Blue Coffee Shop ☕ is ready!
 Thank you for choosing us 💙`;
 
-    // Open WhatsApp Web with pre-filled message
     const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(
       message
     )}`;
@@ -73,18 +72,18 @@ Thank you for choosing us 💙`;
     window.open(whatsappUrl, "_blank");
   };
 
+  /* ===============================
+     UI
+  =============================== */
   return (
     <div className="admin-orders-page">
       <div className="admin-orders-card">
 
-        {/* ===============================
-            HEADER
-        =============================== */}
+        {/* HEADER */}
         <div className="admin-orders-header">
           <h1 className="admin-title">Admin Orders</h1>
 
           <div className="admin-orders-buttons">
-            {/* Back to menu management */}
             <button
               className="back-menu-btn"
               onClick={() => navigate("/admin/menu")}
@@ -92,26 +91,19 @@ Thank you for choosing us 💙`;
               Back to Menu
             </button>
 
-            {/* Logout */}
-            <button
-              className="logout-btn"
-              onClick={logout}
-            >
+            <button className="logout-btn" onClick={logout}>
               Logout
             </button>
           </div>
         </div>
 
-        {/* ===============================
-            ORDERS LIST
-        =============================== */}
+        {/* ORDERS LIST */}
         {orders.length === 0 ? (
           <p className="no-orders">No active orders</p>
         ) : (
           orders.map((order) => (
             <div key={order.id} className="order-card">
-
-              {/* Order information */}
+              {/* ORDER INFO */}
               <div className="order-info">
                 <p><b>Name:</b> {order.customer_name}</p>
                 <p><b>Phone:</b> {order.customer_phone}</p>
@@ -119,10 +111,8 @@ Thank you for choosing us 💙`;
                 <p><b>Status:</b> {order.status}</p>
               </div>
 
-              {/* Order actions */}
+              {/* ACTIONS */}
               <div className="order-actions">
-
-                {/* From pending → preparing */}
                 {order.status === "pending" && (
                   <button
                     className="prepare-btn"
@@ -134,7 +124,6 @@ Thank you for choosing us 💙`;
                   </button>
                 )}
 
-                {/* From preparing → completed + WhatsApp */}
                 {order.status === "preparing" && (
                   <>
                     <button
@@ -160,7 +149,6 @@ Thank you for choosing us 💙`;
                   </>
                 )}
               </div>
-
             </div>
           ))
         )}

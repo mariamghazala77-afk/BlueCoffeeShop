@@ -1,8 +1,8 @@
 import React, { useContext, useState } from "react";
-import axios from "axios";
 import { CartContext } from "../Context/CartContext";
 import { Link } from "react-router-dom";
 import "../Style/Cart.css";
+import api from "../api/axios";
 
 import {
   FaArrowLeft,
@@ -14,26 +14,24 @@ import {
 } from "react-icons/fa";
 
 function Cart() {
-  const { cart, addToCart, removeFromCart, decreaseQty } =
-    useContext(CartContext);
+  const {
+    cart,
+    addToCart,
+    removeFromCart,
+    decreaseQty,
+    clearCart,
+  } = useContext(CartContext);
 
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [showCustomerForm, setShowCustomerForm] = useState(false);
-
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
 
-  // ===============================
-  // Calculate total
-  // ===============================
   const total = cart.reduce(
     (sum, item) => sum + Number(item.price) * item.qty,
     0
   );
 
-  // ===============================
-  // Confirm order (send to backend)
-  // ===============================
   const confirmOrder = async () => {
     if (!customerName || !customerPhone) {
       alert("Please enter your name and phone number");
@@ -47,7 +45,7 @@ function Cart() {
         quantity: item.qty,
       }));
 
-      await axios.post("api/orders", {
+      await api.post("/api/orders", {
         customer_name: customerName,
         customer_phone: customerPhone,
         items: orderItems,
@@ -55,6 +53,9 @@ function Cart() {
 
       setOrderPlaced(true);
       setShowCustomerForm(false);
+      clearCart();
+      setCustomerName("");
+      setCustomerPhone("");
     } catch (error) {
       console.error("Order failed:", error);
       alert("Failed to place order");
@@ -68,10 +69,7 @@ function Cart() {
       <div className="cart-content">
         <h1 className="cart-title">Your Cart</h1>
 
-        {/* ===============================
-            Empty Cart
-        =============================== */}
-        {cart.length === 0 && (
+        {cart.length === 0 && !orderPlaced && (
           <div className="empty-cart-container">
             <div className="empty-cart-card">
               <FaShoppingCart className="empty-cart-icon" />
@@ -84,15 +82,13 @@ function Cart() {
           </div>
         )}
 
-        {/* ===============================
-            Cart Items
-        =============================== */}
         {cart.length > 0 && (
           <>
             <div className="cart-items-grid">
               {cart.map((item) => (
                 <div className="cart-card" key={item.id}>
                   <h2>{item.name}</h2>
+
                   <span className="cart-price">
                     ${Number(item.price).toFixed(2)}
                   </span>
@@ -125,13 +121,9 @@ function Cart() {
               ))}
             </div>
 
-            {/* ===============================
-                TOTAL & ACTIONS
-            =============================== */}
             <div className="cart-total-box">
               <h2>Total: ${total.toFixed(2)}</h2>
 
-              {/* Show Place Order button */}
               {!showCustomerForm && !orderPlaced && (
                 <button
                   className="order-btn"
@@ -141,9 +133,6 @@ function Cart() {
                 </button>
               )}
 
-              {/* ===============================
-                  CUSTOMER FORM (CARD)
-              =============================== */}
               {showCustomerForm && !orderPlaced && (
                 <div className="order-message">
                   <h3>Enter your details</h3>
@@ -153,46 +142,47 @@ function Cart() {
                       type="text"
                       placeholder="Your Name"
                       value={customerName}
-                      onChange={(e) => setCustomerName(e.target.value)}
+                      onChange={(e) =>
+                        setCustomerName(e.target.value)
+                      }
                     />
 
                     <input
                       type="text"
                       placeholder="Phone Number"
                       value={customerPhone}
-                      onChange={(e) => setCustomerPhone(e.target.value)}
+                      onChange={(e) =>
+                        setCustomerPhone(e.target.value)
+                      }
                     />
                   </div>
 
-                  <button className="order-btn" onClick={confirmOrder}>
+                  <button
+                    className="order-btn"
+                    onClick={confirmOrder}
+                  >
                     Confirm Order
                   </button>
                 </div>
               )}
-
-              {/* ===============================
-                  SUCCESS MESSAGE
-              =============================== */}
-              {orderPlaced && (
-                <div className="order-message">
-                  <FaCheckCircle className="order-icon" />
-                  <h3>Your order has been placed!</h3>
-                  <p>We will start preparing it shortly.</p>
-                </div>
-              )}
-
-              <Link to="/" className="cart-back-btn">
-                <FaArrowLeft /> Back to Home
-              </Link>
             </div>
           </>
+        )}
+
+        {orderPlaced && (
+          <div className="order-message">
+            <FaCheckCircle className="order-icon" />
+            <h3>Your order has been placed!</h3>
+            <p>We will start preparing it shortly.</p>
+
+            <Link to="/" className="cart-back-btn">
+              <FaArrowLeft /> Back to Home
+            </Link>
+          </div>
         )}
       </div>
     </div>
   );
 }
 
-export default Cart;
-
-
-
+export default Cart; // ✅ THIS FIXES THE ERROR

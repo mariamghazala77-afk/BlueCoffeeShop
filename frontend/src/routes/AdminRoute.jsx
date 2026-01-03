@@ -1,9 +1,6 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
 
-/*
-  Frontend route guard for admin pages
-*/
 function AdminRoute({ children }) {
   const isAdminLoggedIn = localStorage.getItem("adminLoggedIn");
 
@@ -15,4 +12,3 @@ function AdminRoute({ children }) {
 }
 
 export default AdminRoute;
-

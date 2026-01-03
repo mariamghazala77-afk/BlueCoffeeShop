@@ -5,7 +5,6 @@ import {
   Route,
   useLocation,
 } from "react-router-dom";
-
 import { AnimatePresence } from "framer-motion";
 
 // Components
@@ -13,7 +12,7 @@ import ScrollToTop from "./Components/ScrollToTop";
 import FloatingCart from "./Components/FloatingCart";
 import Loader from "./Components/Loader";
 
-// Pages (Client)
+// Client Pages
 import Home from "./Pages/Home";
 import Menu from "./Pages/Menu";
 import VisitUs from "./Pages/VisitUs";
@@ -21,7 +20,7 @@ import About from "./Pages/About";
 import Services from "./Pages/Services";
 import Cart from "./Pages/Cart";
 
-// Pages (Admin)
+// Admin Pages
 import AdminLogin from "./Pages/AdminLogin";
 import AdminMenu from "./Pages/AdminMenu";
 import AdminOrders from "./Pages/AdminOrders";
@@ -36,7 +35,7 @@ import { CartProvider } from "./Context/CartContext";
 import "./Style/Responsive.css";
 
 /* ===============================
-   Animated Routes Component
+   Animated Routes
 ================================ */
 function AnimatedRoutes() {
   const location = useLocation();
@@ -44,7 +43,7 @@ function AnimatedRoutes() {
   return (
     <AnimatePresence mode="wait">
       <Routes location={location} key={location.pathname}>
-        {/* CLIENT ROUTES */}
+        {/* CLIENT */}
         <Route path="/" element={<Home />} />
         <Route path="/menu" element={<Menu />} />
         <Route path="/visit" element={<VisitUs />} />
@@ -52,7 +51,7 @@ function AnimatedRoutes() {
         <Route path="/services" element={<Services />} />
         <Route path="/cart" element={<Cart />} />
 
-        {/* ADMIN ROUTES */}
+        {/* ADMIN */}
         <Route path="/admin/login" element={<AdminLogin />} />
 
         <Route
@@ -78,20 +77,16 @@ function AnimatedRoutes() {
 }
 
 /* ===============================
-   App Wrapper (Controls Cart + Loader)
+   App Wrapper
 ================================ */
 function AppWrapper() {
   const location = useLocation();
-
-  // Hide cart on admin pages
   const isAdminPage = location.pathname.startsWith("/admin");
 
   return (
     <>
       <ScrollToTop />
-
       {!isAdminPage && <FloatingCart />}
-
       <AnimatedRoutes />
     </>
   );
@@ -103,7 +98,6 @@ function AppWrapper() {
 function App() {
   const [loading, setLoading] = useState(true);
 
-  // Show loader for 2 seconds
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 2000);
     return () => clearTimeout(timer);
@@ -119,8 +113,3 @@ function App() {
 }
 
 export default App;
-
-
-
-
-

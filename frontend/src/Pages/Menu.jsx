@@ -2,9 +2,8 @@ import React, { useState, useEffect, useContext } from "react";
 import "../Style/Menu.css";
 import bg from "../assets/background.webp";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import api from "../api/axios";
 
-// Icons
 import {
   FaArrowLeft,
   FaUtensils,
@@ -13,21 +12,16 @@ import {
   FaCheese,
 } from "react-icons/fa";
 
-// Cart Context
 import { CartContext } from "../Context/CartContext";
 
 function Menu() {
-  // ===============================
-  // STATE
-  // ===============================
   const [category, setCategory] = useState("");
   const [menuData, setMenuData] = useState({});
-
   const { addToCart } = useContext(CartContext);
 
-  // ===============================
-  // CATEGORY ICONS
-  // ===============================
+  // 🔴 BACKEND URL (VERY IMPORTANT)
+  const API_URL = "http://localhost:5000";
+
   const categoryIcons = {
     Sandwiches: <FaUtensils />,
     Desserts: <FaIceCream />,
@@ -35,95 +29,41 @@ function Menu() {
     Croissant: <FaCheese />,
   };
 
-  // ===============================
-  // FETCH MENU FROM BACKEND
-  // ===============================
+  /* ===============================
+     FETCH MENU
+  =============================== */
   useEffect(() => {
-    axios
-      .get("/api/menu")
-      .then((res) => {
-        const groupedMenu = {};
+    api.get("/api/menu").then((res) => {
+      const grouped = {};
 
-        res.data.forEach((item) => {
-          // Ignore unknown categories
-          if (!categoryIcons[item.category]) return;
+      res.data.forEach((item) => {
+        if (!categoryIcons[item.category]) return;
 
-          // Create category group if not exists
-          if (!groupedMenu[item.category]) {
-            groupedMenu[item.category] = {
-              icon: categoryIcons[item.category],
-              items: [],
-            };
-          }
+        if (!grouped[item.category]) {
+          grouped[item.category] = {
+            icon: categoryIcons[item.category],
+            items: [],
+          };
+        }
 
-          groupedMenu[item.category].items.push(item);
-        });
-
-        setMenuData(groupedMenu);
-        setCategory(Object.keys(groupedMenu)[0]);
-      })
-      .catch((error) => {
-        console.error("Error fetching menu:", error);
+        grouped[item.category].items.push(item);
       });
+
+      setMenuData(grouped);
+      setCategory(Object.keys(grouped)[0]);
+    });
   }, []);
 
-  // ===============================
-  // RENDER MENU ITEMS
-  // ===============================
-  const renderItems = (data) => {
-    if (!data) return null;
-
-    return (
-      <div className="menu-items">
-        {data.items.map((item) => (
-          <div className="menu-card" key={item.id}>
-            {/* IMAGE — SIGNED URL FROM BACKEND */}
-            {item.image_url && (
-              <img
-                src={item.image_url}
-                alt={item.name}
-                className="menu-image"
-              />
-            )}
-
-            {/* ITEM NAME */}
-            <h2>{item.name}</h2>
-
-            {/* ITEM PRICE */}
-            <span>${item.price}</span>
-
-            {/* ADD TO CART */}
-            <button
-              className="add-btn"
-              onClick={() =>
-                addToCart({
-                  id: item.id,
-                  name: item.name,
-                  price: Number(item.price),
-                  image: item.image_url,
-                })
-              }
-            >
-              Add to Cart
-            </button>
-          </div>
-        ))}
-      </div>
-    );
-  };
-
-  // ===============================
-  // UI
-  // ===============================
+  /* ===============================
+     UI
+  =============================== */
   return (
     <div
       className="menu-page"
       style={{ backgroundImage: `url(${bg})` }}
     >
-      {/* BACKGROUND OVERLAY */}
       <div className="menu-overlay"></div>
 
-      {/* MAIN CONTENT */}
       <div className="menu-content">
         <h1 className="menu-title">Our Menu</h1>
 
@@ -144,12 +84,53 @@ function Menu() {
         </div>
 
         {/* MENU ITEMS */}
-        {renderItems(menuData[category])}
+        <div className="menu-items">
+          {menuData[category]?.items.map((item) => {
+            // ✅ Decide correct image URL
+            const imageSrc = item.image_url
+              ? item.image_url.startsWith("/uploads")
+                ? `${API_URL}${item.image_url}` // backend image
+                : item.image_url // frontend static image
+              : null;
+
+            return (
+              <div className="menu-card" key={item.id}>
+                {/* IMAGE (OPTIONAL) */}
+                {imageSrc && (
+                  <img
+                    src={imageSrc}
+                    alt={item.name}
+                    className="menu-image"
+                    onError={(e) => {
+                      e.target.style.display = "none";
+                    }}
+                  />
+                )}
+
+                <h2>{item.name}</h2>
+                <span>${item.price}</span>
+
+                <button
+                  className="add-btn"
+                  onClick={() =>
+                    addToCart({
+                      id: item.id,
+                      name: item.name,
+                      price: Number(item.price),
+                      image: imageSrc,
+                    })
+                  }
+                >
+                  Add to Cart
+                </button>
+              </div>
+            );
+          })}
+        </div>
 
         {/* BACK BUTTON */}
         <Link to="/" className="back-btn">
-          <FaArrowLeft />
-          Back to Home
+          <FaArrowLeft /> Back to Home
         </Link>
       </div>
     </div>

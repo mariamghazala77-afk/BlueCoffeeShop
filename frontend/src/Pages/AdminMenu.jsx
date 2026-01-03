@@ -1,129 +1,165 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import "../Style/AdminMenu.css";
+import api from "../api/axios";
 
 function AdminMenu() {
-  // ===============================
-  // NAVIGATION
-  // ===============================
   const navigate = useNavigate();
 
-  const logout = () => {
-    localStorage.removeItem("adminLoggedIn");
-    navigate("/admin/login");
-  };
+  // Reference to file input (used to reset it after submit)
+  const fileRef = useRef(null);
 
-  // ===============================
-  // STATE
-  // ===============================
+  // Backend base URL (used only to display images)
+  const API_URL = "http://localhost:5000";
+
+  /* ===============================
+     STATE VARIABLES
+  ================================ */
+
+  // List of menu items
   const [menu, setMenu] = useState([]);
+
+  // If not null → edit mode
   const [editingId, setEditingId] = useState(null);
 
+  // Form fields
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [category, setCategory] = useState("Hot Beverages");
 
-  // 👇 BOTH OPTIONS
+  // Holds NEW uploaded image file
   const [imageFile, setImageFile] = useState(null);
-  const [imageUrl, setImageUrl] = useState("");
 
-  // ===============================
-  // FETCH MENU
-  // ===============================
+  // Holds EXISTING image URL (used in edit mode)
+  const [currentImage, setCurrentImage] = useState(null);
+
+  /* ===============================
+     FETCH MENU FROM BACKEND
+  ================================ */
   const fetchMenu = async () => {
-    try {
-      const res = await axios.get("/api/menu/admin/all");
-      setMenu(res.data);
-    } catch (err) {
-      console.error("FETCH MENU ERROR:", err);
-    }
+    const res = await api.get("/api/menu/admin/all");
+    setMenu(res.data);
   };
 
+  // Fetch menu once when component loads
   useEffect(() => {
     fetchMenu();
   }, []);
 
-  // ===============================
-  // ADD / UPDATE ITEM
-  // ===============================
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    const formData = new FormData();
-    formData.append("name", name);
-    formData.append("price", price);
-    formData.append("category", category);
-
-    // PRIORITY: upload file > URL
-    if (imageFile) {
-      formData.append("image", imageFile);
-    } else if (imageUrl) {
-      formData.append("image_url", imageUrl);
-    }
-
-    try {
-      if (editingId) {
-        await axios.put(`/api/menu/${editingId}`, formData);
-      } else {
-        await axios.post("/api/menu", formData);
-      }
-
-      resetForm();
-      fetchMenu();
-    } catch (err) {
-      console.error("SAVE MENU ERROR:", err);
-      alert("Failed to save menu item");
-    }
-  };
-
-  // ===============================
-  // EDIT ITEM
-  // ===============================
-  const handleEdit = (item) => {
-    setEditingId(item.id);
-    setName(item.name);
-    setPrice(item.price);
-    setCategory(item.category);
-    setImageFile(null);
-    setImageUrl(item.image_url || "");
-  };
-
-  // ===============================
-  // DELETE ITEM
-  // ===============================
-  const handleDelete = async (id) => {
-    if (!window.confirm("Delete this item?")) return;
-
-    try {
-      await axios.delete(`/api/menu/${id}`);
-      fetchMenu();
-    } catch (err) {
-      console.error("DELETE ERROR:", err);
-      alert("Failed to delete item");
-    }
-  };
-
-  // ===============================
-  // RESET FORM
-  // ===============================
+  /* ===============================
+     RESET FORM AFTER SUBMIT
+  ================================ */
   const resetForm = () => {
     setEditingId(null);
     setName("");
     setPrice("");
     setCategory("Hot Beverages");
     setImageFile(null);
-    setImageUrl("");
+    setCurrentImage(null);
+
+    // Manually clear file input
+    if (fileRef.current) {
+      fileRef.current.value = "";
+    }
   };
 
+  /* ===============================
+     ADD / UPDATE FORM SUBMIT
+  ================================ */
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Basic validation
+    if (!name || !price || !category) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    /* ===============================
+       UPDATE MODE
+    ================================ */
+    if (editingId) {
+      const formData = new FormData();
+
+      // Always send text fields
+      formData.append("name", name);
+      formData.append("price", price);
+      formData.append("category", category);
+
+      // Only send image if a new one was selected
+      if (imageFile) {
+        formData.append("image", imageFile);
+      }
+
+      // Backend will keep old image if none is sent
+      await api.put(`/api/menu/${editingId}`, formData);
+    }
+
+    /* ===============================
+       ADD MODE
+    ================================ */
+    else {
+      // Image is REQUIRED when adding a new item
+      if (!imageFile) {
+        alert("Please choose an image");
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("price", price);
+      formData.append("category", category);
+      formData.append("image", imageFile); // must match upload.single("image")
+
+      await api.post("/api/menu", formData);
+    }
+
+    resetForm();
+    fetchMenu();
+  };
+
+  /* ===============================
+     EDIT BUTTON HANDLER
+  ================================ */
+  const handleEdit = (item) => {
+    setEditingId(item.id);
+    setName(item.name);
+    setPrice(item.price);
+    setCategory(item.category);
+
+    // Save current image URL for preview
+    setCurrentImage(item.image_url);
+
+    // Clear file input
+    setImageFile(null);
+    if (fileRef.current) {
+      fileRef.current.value = "";
+    }
+  };
+
+  /* ===============================
+     DELETE MENU ITEM
+  ================================ */
+  const handleDelete = async (id) => {
+    if (!window.confirm("Delete this item?")) return;
+
+    await api.delete(`/api/menu/${id}`);
+    fetchMenu();
+  };
+
+  /* ===============================
+     JSX RENDER
+  ================================ */
   return (
     <div className="admin-page">
       <div className="admin-card">
+
         {/* HEADER */}
         <div className="admin-header">
-          <h1 className="admin-title">Admin Menu Management</h1>
+          <h1 className="admin-title">Admin Menu</h1>
 
           <div className="admin-header-buttons">
+            {/* Navigate to Orders page */}
             <button
               className="admin-orders-btn"
               onClick={() => navigate("/admin/orders")}
@@ -131,9 +167,10 @@ function AdminMenu() {
               View Orders
             </button>
 
+            {/* Logout */}
             <button
               className="admin-logout-btn"
-              onClick={logout}
+              onClick={() => navigate("/admin/login")}
             >
               Logout
             </button>
@@ -142,26 +179,26 @@ function AdminMenu() {
 
         {/* FORM */}
         <form onSubmit={handleSubmit} className="admin-form">
+
+          {/* NAME */}
           <input
-            className="admin-input"
-            placeholder="Item Name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            required
+            placeholder="Name"
           />
 
+          {/* PRICE */}
           <input
-            className="admin-input"
             type="number"
-            step="0.01"
-            placeholder="Price"
+            step="0.25"
+            min="0"
             value={price}
             onChange={(e) => setPrice(e.target.value)}
-            required
+            placeholder="Price"
           />
 
+          {/* CATEGORY */}
           <select
-            className="admin-input"
             value={category}
             onChange={(e) => setCategory(e.target.value)}
           >
@@ -171,43 +208,41 @@ function AdminMenu() {
             <option>Croissant</option>
           </select>
 
-          {/* OPTION 1 — UPLOAD IMAGE */}
+          {/* CURRENT IMAGE (EDIT MODE ONLY) */}
+          {editingId && currentImage && (
+            <div className="current-image-box">
+              <img
+                src={`${API_URL}${currentImage}`}
+                alt="Current"
+              />
+              <span>Current Image</span>
+            </div>
+          )}
+
+          {/* FILE INPUT */}
           <input
-            className="admin-input"
             type="file"
+            ref={fileRef}
             accept="image/*"
             onChange={(e) => setImageFile(e.target.files[0])}
           />
 
-          {/* OPTION 2 — IMAGE URL */}
-          <input
-            className="admin-input"
-            type="text"
-            placeholder="Or paste Image URL"
-            value={imageUrl}
-            onChange={(e) => setImageUrl(e.target.value)}
-          />
-
-          <button type="submit" className="admin-btn">
+          {/* SUBMIT BUTTON */}
+          <button className="admin-submit-btn">
             {editingId ? "Update Item" : "Add Item"}
           </button>
         </form>
 
         {/* MENU LIST */}
-        <div className="admin-list">
-          {menu.map((item) => (
-            <div key={item.id} className="admin-row">
-              <span>
-                {item.name} — ${item.price}
-              </span>
-
-              <div>
-                <button onClick={() => handleEdit(item)}>Edit</button>
-                <button onClick={() => handleDelete(item.id)}>Delete</button>
-              </div>
+        {menu.map((item) => (
+          <div key={item.id} className="admin-row">
+            <span>{item.name} – ${item.price}</span>
+            <div>
+              <button onClick={() => handleEdit(item)}>Edit</button>
+              <button onClick={() => handleDelete(item.id)}>Delete</button>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
 
       </div>
     </div>
@@ -215,4 +250,3 @@ function AdminMenu() {
 }
 
 export default AdminMenu;
-
