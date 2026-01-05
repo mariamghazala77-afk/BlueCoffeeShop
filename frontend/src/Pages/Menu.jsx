@@ -15,8 +15,7 @@ import {
 import { CartContext } from "../Context/CartContext";
 
 /* ===============================
-   CATEGORY ICONS (OUTSIDE COMPONENT)
-   This avoids ESLint dependency warnings
+   CATEGORY ICONS
 ================================ */
 const categoryIcons = {
   Sandwiches: <FaUtensils />,
@@ -31,6 +30,13 @@ function Menu() {
   const { addToCart } = useContext(CartContext);
 
   /* ===============================
+     BACKEND URL (SAFE + GUARANTEED)
+     - Uses axios baseURL if exists
+     - Falls back to localhost
+  =============================== */
+  const BACKEND_URL = api.defaults.baseURL || "http://localhost:5000";
+
+  /* ===============================
      FETCH MENU FROM BACKEND
   =============================== */
   useEffect(() => {
@@ -38,7 +44,6 @@ function Menu() {
       const grouped = {};
 
       res.data.forEach((item) => {
-        // Ignore categories without icons
         if (!categoryIcons[item.category]) return;
 
         if (!grouped[item.category]) {
@@ -53,7 +58,6 @@ function Menu() {
 
       setMenuData(grouped);
 
-      // Select first category by default
       const firstCategory = Object.keys(grouped)[0];
       setCategory(firstCategory);
     });
@@ -91,10 +95,9 @@ function Menu() {
         {/* MENU ITEMS */}
         <div className="menu-items">
           {menuData[category]?.items.map((item) => {
-            // Decide correct image URL
             const imageSrc = item.image_url
               ? item.image_url.startsWith("/uploads")
-                ? `${process.env.REACT_APP_API_URL}${item.image_url}`
+                ? `${BACKEND_URL}${item.image_url}`
                 : item.image_url
               : null;
 
